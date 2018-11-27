@@ -1,0 +1,30 @@
+{
+  "name": "wdio-test-results-service",
+  "version": "0.0.1",
+  "description": "WebdriverIO service that sends test results to a GraphQL API",
+  "main": "launcher.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WillBrock/wdio-test-results-service.git"
+  },
+  "keywords": [
+    "WebdriverIO",
+    "GraphQL",
+    "test",
+    "testing",
+    "selenium",
+    "Webdriver"
+  ],
+  "author": "Will Brock",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WillBrock/wdio-test-results-service/issues"
+  },
+  "homepage": "https://github.com/WillBrock/wdio-test-results-service#readme",
+  "devDependencies": {
+    "graphql-request": "^1.8.2"
+  }
+}
