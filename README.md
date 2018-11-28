@@ -14,94 +14,113 @@ npm install --save-dev wdio-test-results-service
 
 ## Todo
 - Add authentication
-- Add support for each `it`
 
-## Stored data
+## Recomended fields for backend
 
-Test Run
+### Test Run
 
-- title
-	Title of the overall test run
-- version
-	Version of code the tests ran against
-- passed
-	Overall test run passed
-- failed
-	Overall test run failed
+| Field       | Type        | Description                            |
+| ------------|-------------|----------------------------------------|
+| `run_key`   | `String`    | Identifier of the overall test run     |
+| `issue_key` | `String`    | Jira issue, Jenkins job, etc.          |
+| `suites`    | `String`    | WebdriverIO suites that were ran       |
+| `version`   | `String`    | Version of code the tests ran against  |
+| `passed`    | `Int`       | Overall test run passed                |
+| `failed`    | `Int`       | Overall test run failed                |
+| `start`     | `Timestamp` | Run start time                         |
+| `end`       | `Timestamp` | Run end time                           |
 
-Note: start and end times should be done in your resolvers if you want that tracked
+### Test Run Result
 
-Test Run Result
-
-- test_run_id
-	Id of the current test run
-- spec_id
-	File name of the test
-- suite_title
-	Name of the first `describe` block in the test file
-- duration
-	How long it took the test to complete in seconds
-- passed
-	Test passed or not
-- failed
-	Test failed or not
-- skipped
-	Test skipped or not
+| Field         | Type     | Description                                         |
+| --------------|----------|-----------------------------------------------------|
+| `test_run_id` | `Int`    | Id of the current test run                          |
+| `spec_id`     | `String` | File name of the test                               |
+| `suite_title` | `String` | Name of the first `describe` block in the test file |
+| `duration`    | `Int`    | How long it took the test to complete in seconds    |
+| `passed`      | `Int`    | Test passed or not                                  |
+| `failed`      | `Int`    | Test failed or not                                  |
+| `skipped`     | `Int`    | Test skipped or not                                 |
+| `retries`     | `Int`    | Number of retries done                              |
 
 ## Enviroment variables
-- GRAPHQL_ENDPOINT
-	The endpoint to your GraphQL server
-- TEST_RUN_TITLE (optional)
-	The title of the overall test run. If not specified it will default to the current timestamp
-- CODE_VERSION (optional)
-	The version of the code that your tests are running against
+
+These can be set when running WebdriverIO and the data will be sent to the GraphQL endpoint
+
+| Variable           |          | Description                                                                                  |
+| -------------------|----------|----------------------------------------------------------------------------------------------|
+| `GRAPHQL_ENDPOINT` | required | The endpoint to your GraphQL server                                                          |
+| `TEST_RUN_TITLE`   | optional | The title of the overall test run. If not specified it will default to the current timestamp |
+| `CODE_VERSION`     | optional | The version of the code that your tests are running against                                  |
+| `ISSUE_KEY`        | optional | Jira issue, Jenkins job, etc.                                                                |
 
 ## Mutations
 
-### createTestRun
-
-This will create the test run
-
-Schema
-
+```
+type Mutation {
+	testRunCreate(run_key: String, version: String, issue_key: String, suites: String) : TestRun,
+	testRunComplete(id: Int) : TestRun,
+	testResultAdd(test_run_id: Int, spec_id: String, suite_title: String, passed: Int, failed: Int, skipped: Int, duration: Int) : TestResult,
+}
 ```
 
-```
+### testRunCreate
 
-Example
+| Field       | Type        | Description                            |
+| ------------|-------------|----------------------------------------|
+| `run_key`   | `String`    | Identifier of the overall test run     |
+| `version`   | `String`    | Version of code the tests ran against  |
+| `issue_key` | `String`    | Jira issue, Jenkins job, etc.          |
+| `suites`    | `String`    | WebdriverIO suites that were ran       |
 
-```
+### testRunComplete
 
-```
+| Field   | Type  | Description                    |
+| --------|-------|--------------------------------|
+| `id`    | `Int` | Id returned from testRunCreate |
 
-### completeTestRun
+### testResultAdd
 
-This will complete the test run
+| Field         | Type     | Description                                         |
+| --------------|----------|-----------------------------------------------------|
+| `test_run_id` | `Int`    | Id of the current test run                          |
+| `spec_id`     | `String` | File name of the test                               |
+| `suite_title` | `String` | Name of the first `describe` block in the test file |
+| `passed`      | `Int`    | Test passed or not                                  |
+| `failed`      | `Int`    | Test failed or not                                  |
+| `skipped`     | `Int`    | Test skipped or not                                 |
+| `duration`    | `Int`    | How long it took the test to complete in seconds    |
 
-Schema
+## Types
 
-```
-
-```
-
-Example
-
-```
-
-```
-
-### addTestResult
-
-This will add a test result record
-
-Schema
-
-```
-
-```
-
-Example
+### TestRun
 
 ```
+type TestRun {
+	id        : Int,
+	run_key   : String,
+	issue_key : String,
+	suites    : String,
+	passed    : Int,
+	failed    : Int,
+	duration  : Int,
+	start     : String,
+	end       : String,
+	version   : String,
+}
+```
 
+### TestResult
+
+```
+type TestResult {
+	id                 : Int,
+	test_run_id        : Int,
+	spec_id            : String,
+	suite_title        : String,
+	passed             : Int,
+	failed             : Int,
+	skipped            : Int,
+	duration           : Int,
+}
 ```

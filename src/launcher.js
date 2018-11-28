@@ -1,45 +1,55 @@
 import { request } from 'graphql-request';
 
 class TestResultsService {
-	async onPrepare(config) {
-		this.endpoint       = process.evn.GRAPHQL_ENDPOINT;
-		this.test_run_title = process.env.TEST_RUN_TITLE || Date.now();
-		this.version        = process.env.CODE_VERSION || null;
-		this.failed_tests   = {};
+	constructor() {
+		this.endpoint = process.env.GRAPHQL_ENDPOINT;
 
 		if(!this.endpoint) {
 			throw new Error(`No graphql endpoint specified`);
 		}
+	}
+
+	async onPrepare(config) {
+		this.test_run_key = (process.env.TEST_RUN_KEY || Date.now()).toString();
+		this.version      = process.env.CODE_VERSION || null;
+		this.issue_key    = process.env.ISSUE_KEY || null;
 
 		const query = `
-			mutation createTestRun($run_title: String!, $version: String) {
-				Run(run_title: $run_title, version: $version) {
+			mutation CreateTestRun($run_key: String!, $version: String, $issue_key: String, $suites: String) {
+				testRunCreate(run_key: $run_key, version: $version, issue_key: $issue_key, suites: $suites) {
 					id,
 				}
 			}
 		`;
 
 		const variables = {
-			run_title : this.test_run_title,
+			run_key   : this.test_run_key,
 			version   : this.version,
+			issue_key : this.issue_key,
+			suites    : config.suite,
 		};
 
-		const result = await request(this.endpoint, query, variables);
+		try {
+			const result = await request(this.endpoint, query, variables);
 
-		this.test_run_id = result.id;
-	};
+			process.env.WDIO_TEST_RUN_ID = result.testRunCreate.id;
+		}
+		catch(e) {
+			// Foo
+		}
+	}
 
 	before() {
 		// Each session id is a browser session. e.g. a spec file
-		this.session_id = global.browser.sessionId;
-		this.failed     = false;
-		this.skipped    = false;
-		this.spec_id    = null;
-		this.duration   = 0;
+		this.session_id  = global.browser.sessionId;
+		this.failed      = false;
+		this.skipped     = false;
+		this.spec_id     = null;
+		this.duration    = 0;
 	}
 
 	beforeSuite(suite) {
-		this.suite_title = suite.title;
+		this.suite_title = suite.title ? suite.title.trim() : null;
 	}
 
 	afterTest(test) {
@@ -52,35 +62,28 @@ class TestResultsService {
 			}
 		}
 
-		if(test.failed) {
+		if(!test.passed) {
 			this.failed = true;
-
-			this.failed_tests[this.spec_id] = true;
 		}
 
-		if(test.skipped) {
+		if(test.pending) {
 			this.skipped = true;
-		}
-
-		// Remove a failed test if this is a retry and the test passes
-		if(this.passed && this.failed_tests[this.spec_id]) {
-			delete this.failed_tests[this.spec_id];
 		}
 
 		this.duration += test.duration;
 	}
 
-	after(data) {
+	after() {
 		const query = `
-			mutation addTestResult($test_run_id: Int!, $spec_id: String!, $suite_title: String!, $duration: Int!, $passed: Int!, $failed: Int!, $skipped: Int!) {
-				Result() {
+			mutation AddTestResult($test_run_id: Int!, $spec_id: String!, $suite_title: String!, $duration: Int!, $passed: Int!, $failed: Int!, $skipped: Int!) {
+				testResultAdd(test_run_id: $test_run_id, spec_id: $spec_id, suite_title: $suite_title, duration: $duration, passed: $passed, failed: $failed, skipped: $skipped) {
 					id,
 				}
 			}
 		`;
 
 		const variables = {
-			test_run_id : this.test_run_id,
+			test_run_id : process.env.WDIO_TEST_RUN_ID,
 			spec_id     : this.spec_id,
 			suite_title : this.suite_title,
 			duration    : this.duration,
@@ -89,29 +92,33 @@ class TestResultsService {
 			skipped     : this.skipped ? 1 : 0,
 		};
 
-		request(this.endpoint, query, variables);
+		try {
+			request(this.endpoint, query, variables);
+		}
+		catch(e) {
+			// Foo
+		}
 	}
 
 	async onComplete() {
-		const failed_run = Object.keys(this.failed_tests).length > 0;
-
 		const query = `
-			mutation completeTestRun($id: Int!, $passed: Int!, $failed: Int!) {
-				Complete(id: $id, passed: $passed, failed: $failed) {
+			mutation CompleteTestRun($id: Int!) {
+				testRunComplete(id: $id) {
 					id
 				}
 			}
 		`;
 
 		const variables = {
-			id     : this.test_run_id,
-			passed : failed_run ? 0 : 1,
-			failed : failed_run ? 1 : 0,
-		}
+			id : process.env.WDIO_TEST_RUN_ID,
+		};
 
-		const result = await request(this.endpoint, query, variables);
-		// Remove retries from the automation testing site db (user_audit_trail)
-		// Update the test run with end datetime and failed or passed
+		try {
+			return request(this.endpoint, query, variables);
+		}
+		catch(e) {
+			// Foo
+		}
 	}
 }
 
