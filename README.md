@@ -58,7 +58,7 @@ These can be set when running WebdriverIO and the data will be sent to the Graph
 
 ## Mutations
 
-```
+```graphql
 type Mutation {
 	testRunCreate(run_key: String, version: String, issue_key: String, suites: String) : TestRun,
 	testRunComplete(id: Int) : TestRun,
@@ -97,7 +97,7 @@ type Mutation {
 
 ### TestRun
 
-```
+```graphql
 type TestRun {
 	id        : Int,
 	run_key   : String,
@@ -114,7 +114,7 @@ type TestRun {
 
 ### TestResult
 
-```
+```graphql
 type TestResult {
 	id                 : Int,
 	test_run_id        : Int,

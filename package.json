@@ -1,6 +1,6 @@
 {
   "name": "wdio-test-results-service",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "WebdriverIO service that sends test results to a GraphQL API",
   "author": "Will Brock",
   "homepage": "https://github.com/WillBrock/wdio-test-results-service#readme",
@@ -15,8 +15,7 @@
   "scripts": {
     "build": "npm run clean && npm run compile",
     "clean": "rm -rf ./build",
-    "compile": "./node_modules/.bin/babel src/ --out-dir build/",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "compile": "./node_modules/.bin/babel src/ --out-dir build/"
   },
   "keywords": [
     "WebdriverIO",
