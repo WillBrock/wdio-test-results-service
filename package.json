@@ -2,16 +2,21 @@
   "name": "wdio-test-results-service",
   "version": "0.0.1",
   "description": "WebdriverIO service that sends test results to a GraphQL API",
+  "author": "Will Brock",
+  "homepage": "https://github.com/WillBrock/wdio-test-results-service#readme",
   "main": "launcher.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WillBrock/wdio-test-results-service.git"
+  },
+  "bugs": {
+    "url": "https://github.com/WillBrock/wdio-test-results-service/issues"
+  },
   "scripts": {
     "build": "npm run clean && npm run compile",
     "clean": "rm -rf ./build",
     "compile": "./node_modules/.bin/babel src/ --out-dir build/",
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/WillBrock/wdio-test-results-service.git"
   },
   "keywords": [
     "WebdriverIO",
@@ -21,12 +26,7 @@
     "selenium",
     "Webdriver"
   ],
-  "author": "Will Brock",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/WillBrock/wdio-test-results-service/issues"
-  },
-  "homepage": "https://github.com/WillBrock/wdio-test-results-service#readme",
   "devDependencies": {
     "@babel/cli": "^7.1.5",
     "@babel/core": "^7.1.6",
