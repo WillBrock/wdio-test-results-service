@@ -6,6 +6,8 @@ This will store results based on an entire spec file run.
 
 This service is still a work in progress.
 
+Requires that there is a GraphQL back-end setup with the mutations below.
+
 ## Install
 
 ```
@@ -15,7 +17,7 @@ npm install --save-dev wdio-test-results-service
 ## Todo
 - Add authentication
 
-## Recomended fields for backend
+## Recomended fields for back-end
 
 ### Test Run
 
