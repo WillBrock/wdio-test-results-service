@@ -15,8 +15,18 @@ class TestResultsService {
 		this.issue_key    = process.env.ISSUE_KEY || null;
 
 		const query = `
-			mutation CreateTestRun($run_key: String!, $version: String, $issue_key: String, $suites: String) {
-				testRunCreate(run_key: $run_key, version: $version, issue_key: $issue_key, suites: $suites) {
+			mutation CreateTestRun(
+				$run_key: String!,
+				$version: String,
+				$issue_key: String,
+				$suites: String
+			) {
+				testRunCreate(
+					run_key: $run_key,
+					version: $version,
+					issue_key: $issue_key,
+					suites: $suites
+				) {
 					id,
 				}
 			}
@@ -75,8 +85,24 @@ class TestResultsService {
 
 	after() {
 		const query = `
-			mutation AddTestResult($test_run_id: Int!, $spec_id: String!, $suite_title: String!, $duration: Int!, $passed: Int!, $failed: Int!, $skipped: Int!) {
-				testResultAdd(test_run_id: $test_run_id, spec_id: $spec_id, suite_title: $suite_title, duration: $duration, passed: $passed, failed: $failed, skipped: $skipped) {
+			mutation AddTestResult(
+				$test_run_id: Int!,
+				$spec_id: String!,
+				$suite_title: String!,
+				$duration: Int!,
+				$passed: Int!,
+				$failed: Int!,
+				$skipped: Int!
+			) {
+				testResultAdd(
+					test_run_id: $test_run_id,
+					spec_id: $spec_id,
+					suite_title: $suite_title,
+					duration: $duration,
+					passed: $passed,
+					failed: $failed,
+					skipped: $skipped
+				) {
 					id,
 				}
 			}
@@ -100,7 +126,7 @@ class TestResultsService {
 		}
 	}
 
-	async onComplete() {
+	onComplete() {
 		const query = `
 			mutation CompleteTestRun($id: Int!) {
 				testRunComplete(id: $id) {
