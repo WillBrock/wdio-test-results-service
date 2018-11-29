@@ -61,8 +61,18 @@ These can be set when running WebdriverIO and the data will be sent to the Graph
 ```graphql
 type Mutation {
 	testRunCreate(run_key: String, version: String, issue_key: String, suites: String) : TestRun,
+
 	testRunComplete(id: Int) : TestRun,
-	testResultAdd(test_run_id: Int, spec_id: String, suite_title: String, passed: Int, failed: Int, skipped: Int, duration: Int) : TestResult,
+
+	testResultAdd(
+		test_run_id: Int,
+		spec_id: String,
+		suite_title: String,
+		passed: Int,
+		failed: Int,
+		skipped: Int,
+		duration: Int
+	) : TestResult,
 }
 ```
 
