@@ -112,7 +112,7 @@ class TestResultsService {
 			test_run_id : process.env.WDIO_TEST_RUN_ID,
 			spec_id     : this.spec_id,
 			suite_title : this.suite_title,
-			duration    : this.duration,
+			duration    : this.duration || 0,
 			passed      : !this.failed ? 1 : 0,
 			failed      : this.failed ? 1 : 0,
 			skipped     : this.skipped ? 1 : 0,
